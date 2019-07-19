@@ -7,7 +7,7 @@ vue多页项目模板，基于pug模板引擎
 - 上线打包：`npm run build`
 
 ## vue单页改成多页步骤
-本项目基于另外两个项目修改而来，对于`webpack配置`及`vue由单页改成多页`不清楚的可以到以下两个仓库中查询。
+本项目基于另外两个项目修改而来，对于`webpack配置`及`vue由单页改成多页步骤`不清楚的可以到以下两个仓库中查询。
 - [vue单页项目环境搭建，附webpack4+详解](https://github.com/xurna/vue-template)
 - [vue单页到多页项目配置](https://github.com/xurna/vue-multipage-template)
 
