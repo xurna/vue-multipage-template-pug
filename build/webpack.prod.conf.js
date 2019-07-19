@@ -126,7 +126,7 @@ const config = webpackMerge(commonConfig, {
   }
 })
 
-let entryHtml = glob.sync(PAGE_PATH + '/*/*.html')
+let entryHtml = glob.sync(PAGE_PATH + '/*/*.pug')
 entryHtml.forEach((filePath) => {
   let filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'))
   let conf = {

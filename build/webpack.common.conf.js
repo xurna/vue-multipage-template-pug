@@ -36,6 +36,10 @@ module.exports = {
         include: [appDir],
         exclude: [nodeModuleDir]
       },
+      {
+        test: /\.pug$/,
+        loader: 'pug-loader'
+      },
     ]
   },
   plugins: [
