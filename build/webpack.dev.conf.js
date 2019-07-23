@@ -8,13 +8,16 @@ const glob = require('glob')
 const nodeModuleDir = path.resolve(process.cwd(), 'node_module')
 const appDir = path.resolve(process.cwd(), 'app')
 const ip = require('ip')
-const port = 9001
+const port = 9002
 const host = ip.address()
 const PAGE_PATH = path.join(appDir, 'pages')
 
 const config = webpackMerge(commonConfig, {
   mode: 'development',
   devtool: 'cheap-module-eval-source-map',
+  output: {
+    publicPath: '/',
+  },
   devServer: {
     publicPath: '/',
     contentBase: path.resolve(process.cwd(), 'dist'),
@@ -30,6 +33,7 @@ const config = webpackMerge(commonConfig, {
       warnings: false,
       errors: true
     },
+    clientLogLevel: 'error',
     // 打印打包信息配置
     stats: {
       colors: true,
@@ -59,15 +63,8 @@ const config = webpackMerge(commonConfig, {
               importLoaders: 2, // 0 => no loaders (default); 2 => postcss-loader, less-loader
             },
           },
-          {
-            loader: "postcss-loader",
-            options: {
-              plugins: [
-                require("autoprefixer")
-              ]
-            }
-          }, // 位置不可与less-loader反过来，因为是从下到上做处理的
-          'less-loader',
+          "postcss-loader",
+          'less-loader', // 位置不可与less-loader反过来，因为是从下到上做处理的
         ],
         include: [appDir],
         exclude: [nodeModuleDir]
