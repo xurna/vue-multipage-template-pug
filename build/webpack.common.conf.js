@@ -1,6 +1,7 @@
 const utils = require('./utils')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const path = require('path')
+const HappyPack = require('happypack');
 const process = require('process')
 const nodeModuleDir = path.resolve(process.cwd(), 'node_module')
 const appDir = path.resolve(process.cwd(), 'app')
@@ -32,7 +33,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        use: ['babel-loader'],
+        use: ['happypack/loader?id=js'],
         include: [appDir],
         exclude: [nodeModuleDir]
       },
@@ -45,5 +46,10 @@ module.exports = {
   plugins: [
     // make sure to include the plugin for the magic
     new VueLoaderPlugin(),
+    new HappyPack({
+      id: 'js',
+      threads: 4,
+      loaders: ['babel-loader','cache-loader']
+    }),
   ]
 }

@@ -9,6 +9,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const InlineManifestWebpackPlugin = require('inline-manifest-webpack-plugin')
 const path = require('path')
+const HappyPack = require('happypack');
+const os = require('os')
+// 拿到系统CPU的最大核数，happypack 将编译工作灌满所有线程
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 const process = require('process')
 const glob = require('glob')
 const nodeModuleDir = path.resolve(process.cwd(), 'node_module')
@@ -68,6 +72,21 @@ const config = webpackMerge(commonConfig, {
     }
   },
   plugins: [
+    new HappyPack({
+      id: 'styles',
+      threadPool: happyThreadPool,
+      loaders: [
+        'cache-loader',
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 2, // 0 => no loaders (default); 2 => postcss-loader, less-loader
+          },
+        },
+        'postcss-loader',
+        'less-loader', // 位置不可与less-loader反过来，因为是从下到上做处理的
+      ],
+    }),
     new CleanWebpackPlugin(),
     // 从js中提取css，目前缺失HMR，所以只能在生成环境中使用
     new MiniCssExtractPlugin({
@@ -80,15 +99,8 @@ const config = webpackMerge(commonConfig, {
       {
         test: /\.(le|c)ss$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 2, // 0 => no loaders (default); 2 => postcss-loader, less-loader
-            },
-          },
-          'postcss-loader',
-          'less-loader', // 位置不可与less-loader反过来，因为是从下到上做处理的
+          MiniCssExtractPlugin.loader, // MiniCssExtractPlugin 无法与 happypack 共存, MiniCssExtractPlugin 必须置于 cache-loader 执行之后，否则无法生效
+          'happypack/loader?id=styles'
         ],
         include: [appDir],
         exclude: [nodeModuleDir]
